@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="pastel">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/main.css">
+        <title>Register</title>
+    </head>
+    <body class="min-h-screen flex items-center justify-center bg-neutral-content">
+        <div class="card w-96 bg-base-100 shadow-xl p-6 space-y-6">
+            <h2 class="card-title text-xl text-neutral mb-2 pb-2">Register</h2>
+            <form action="/register" method="POST" class="space-y-4">
+                <div>
+                    <input type="text" name="username" placeholder="Username" required
+                        class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#1da1f2] outline-primary" />
+                </div>
+                <div>
+                    <input type="email" name="email" placeholder="Email" required
+                        class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#1da1f2] outline-primary" />
+                </div>
+                <div>
+                    <input type="password" name="password" placeholder="Password" required
+                        class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#1da1f2] outline-primary" />
+                </div>
+                <button class="btn rounded bg-primary w-full p-1" type="submit">Register</button>
+                <a href="/login" class="link link-neutral">Already have an account?</a>
+            </form>
+        </div>
+    </body>
+</html>
