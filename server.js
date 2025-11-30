@@ -218,7 +218,12 @@ app.get("/tasks", ensureLogin, (req, res) => {
       userId: req.session.user.username
     },
   }).then((data) => {
-    res.render("tasks", { tasks: data.length > 0 ? data : null, error: null});
+    // sort by due date, so they don't get reordered
+    data.sort((a, b) => {
+      return a.dueDate - b.dueDate;
+    });
+
+    res.render("tasks", { tasks: data.length > 0 ? data : null, error: null });
   })
   .catch((err) => {
     res.render("tasks", { tasks: null, error: "There was an error while loading tasks"});
@@ -247,6 +252,23 @@ app.post("/tasks/add", ensureLogin, (req, res) => {
     res.render("addTask", { error: "There was an error adding tasks" });
   })
 
+});
+
+// task/status/:id POST handler
+app.post("/tasks/status/:id", ensureLogin, async (req, res) => {
+  const task = await Task.findByPk(req.params.id);
+  const newStatus = task.status === "pending" ? "completed" : "pending";
+
+  await Task.update(
+    {
+      status: newStatus
+    },
+    {
+      where: {id: req.params.id}
+    }
+  ).then(() => {
+    res.redirect("/tasks");
+  })
 });
 
 // catch request for routes that don't exist
