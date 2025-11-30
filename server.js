@@ -16,6 +16,7 @@ const clientSessions = require("client-sessions");
 const path = require("path");
 const bcrypt = require('bcryptjs');
 const mongoose = require("mongoose");
+const Sequelize = require("sequelize");
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -38,7 +39,7 @@ app.use(
   })
 );
 
-// connect to mongoose
+// mongose setup
 mongoose.connect(process.env.mongoose);
 
 let Schema = mongoose.Schema;
@@ -61,6 +62,44 @@ let userSchema = new Schema({
 });
 
 let User = mongoose.model("users", userSchema);
+
+// Sequelize setup
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+});
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch((err) => {
+    console.log('Unable to connect to the database:', err);
+  });
+
+  // define task model
+  const Task = sequelize.define("Task", {
+    title: { 
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    description: Sequelize.TEXT,
+    dueDate: Sequelize.DATE,
+    status: {
+      type: Sequelize.STRING,
+      defaultValue: "pending"
+    },
+    userId: {
+      type: Sequelize.STRING,
+      allowNull: false
+    }
+  });
 
 // set local variables
 app.use((req, res, next) => {
@@ -189,7 +228,7 @@ app.post("/tasks/add", ensureLogin, (req, res) => {
     return;
   }
 
-  
+
 
 });
 
