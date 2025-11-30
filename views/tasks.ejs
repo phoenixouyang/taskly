@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="pastel">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/main.css">
+        <title>Your Tasks</title>
+    </head>
+    <body class="min-h-screen flex flex-col items-center bg-neutral-content">
+        <div class="flex justify-between items-center w-full max-w-xl mt-5">
+            <h1 class="text-2xl text-primary-content font-bold">Your Tasks</h1>
+            <a class="btn btn-primary shadow-md" href="/tasks/add">Add Task</a>
+        </div>
+        <!-- task card loop here -->
+        <div class="card w-full max-w-xl bg-base-100 shadow-xl mt-5 p-6 flex flex-col space-y-2">
+            <div class="flex justify-between w-full">
+                <h2 class="font-bold text-lg">do something</h1>
+                <p class="bg-warning px-3 py-1 text-sm rounded-2xl">pending</p>
+            </div>
+            <p class="text-neutral">asdfsadf</p>
+            <p class="text-neutral">date</p>
+            <div class="flex gap-2 pt-2">
+                <a class="btn btn-sm btn-info" href="/tasks/edit/">Edit</a>
+                <a class="btn btn-sm btn-secondary" href="/tasks/delete">Delete</a>
+                <a class="btn btn-sm btn-accent" href="/tasks/status">Mark as Completed</a>
+            </div>
+        </div>
+        <div class="flex gap-6 pt-4 justify-start w-full max-w-xl">
+            <a class="btn btn-primary shadow-md hover:shadow-lg" href="/dashboard">Back to Dashboard</a>
+            <a class="btn btn-neutral shadow-md hover:shadow-lg" href="/logout">Logout</a>
+        </div>
+    </body>
+</html>

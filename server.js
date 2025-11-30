@@ -122,6 +122,12 @@ app.get("/register", (req, res) => {
 
 // register POST handler
 app.post("/register", (req, res) => {
+
+  if (!req.body.username.trim() || !req.body.email.trim()) {
+    res.render("register", { error: "Username and email cannot be empty" });
+    return;
+  }
+
   User.findOne({ $or: [{ username: req.body.username }, { email: req.body.email }] })
     .exec()
     .then((user) => {
@@ -167,7 +173,34 @@ app.get("/logout", (req, res) => {
 });
 
 // task route handler
+app.get("/tasks", ensureLogin, (req, res) => {
+  res.render("tasks");
+});
 
+// task/add route handler
+app.get("/tasks/add", ensureLogin, (req, res) => {
+  res.render("addTask", {error: null});
+});
+
+// task/add POST handler
+app.post("/tasks/add", ensureLogin, (req, res) => {
+  if (!req.body.title.trim()) {
+    res.render("addTask", { error: "Task title cannot be empty" });
+    return;
+  }
+
+  
+
+});
+
+// catch request for routes that don't exist
+app.use((req, res, next) => {
+  if (req.session.user) {
+    res.redirect("/dashboard");
+  } else {
+    res.redirect("/");
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

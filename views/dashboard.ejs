@@ -6,15 +6,14 @@
         <link rel="stylesheet" href="/css/main.css">
         <title>Dashboard</title>
     </head>
-    <body class="min-h-screen flex items-center justify-center bg-neutral-content">
-        <div class="card w-full max-w-xl bg-base-100 shadow-xl p-10 flex flex-col space-y-8">
+    <body class="min-h-screen flex flex-col items-center bg-neutral-content">
+        <div class="card w-full max-w-xl bg-base-100 shadow-xl mt-20 p-10 flex flex-col space-y-8">
             <h2 class="card-title text-l text-primary-content mb-2 pb-2">Welcome, <%= user.username %>!</h2>
             <p class="">Email: <%= user.email %></p>
-            <div class="flex gap-6 pt-4">
-                <a class="btn btn-accent" href="/tasks">View Tasks</a>
-                <a class="btn btn-neutral" href="/logout">Logout</a>
-            </div>
-
+        </div>
+        <div class="flex gap-6 pt-4 justify-start w-full max-w-xl">
+            <a class="btn btn-primary shadow-md hover:shadow-lgshadow-md hover:shadow-lg" href="/tasks">View Tasks</a>
+            <a class="btn btn-neutral shadow-md hover:shadow-lg" href="/logout">Logout</a>
         </div>
     </body>
 </html>
