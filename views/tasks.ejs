@@ -30,7 +30,9 @@
                         <p class="text-neutral">Due: <%= task.dueDate.toLocaleDateString() %></p>
                         <div class="flex gap-2 pt-2">
                             <a class="btn btn-sm btn-info" href="/tasks/edit/">Edit</a>
-                            <a class="btn btn-sm btn-secondary" href="/tasks/delete">Delete</a>
+                            <form action="/tasks/delete/<%= task.id %>" method="POST">
+                                <button class="btn btn-sm btn-secondary" type="submit">Delete</button>
+                            </form>
                             <form action="/tasks/status/<%= task.id %>" method="POST">
                                 <% if (task.status === "pending")  { %>
                                     <button class="btn btn-sm btn-accent" type="submit">Mark as Completed</button>

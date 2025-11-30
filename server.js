@@ -254,7 +254,7 @@ app.post("/tasks/add", ensureLogin, (req, res) => {
 
 });
 
-// task/status/:id POST handler
+// tasks/status/:id POST handler
 app.post("/tasks/status/:id", ensureLogin, async (req, res) => {
   const task = await Task.findByPk(req.params.id);
   const newStatus = task.status === "pending" ? "completed" : "pending";
@@ -268,8 +268,19 @@ app.post("/tasks/status/:id", ensureLogin, async (req, res) => {
     }
   ).then(() => {
     res.redirect("/tasks");
-  })
+  });
 });
+
+// tasks/delete/:id POST handler
+app.post("/tasks/delete/:id", ensureLogin, async (req, res) => {
+  await Task.destroy(
+    {
+      where: { id: req.params.id }
+    }
+  ).then(() => {
+    res.redirect("/tasks");
+  });
+})
 
 // catch request for routes that don't exist
 app.use((req, res, next) => {
