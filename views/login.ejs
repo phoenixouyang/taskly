@@ -8,6 +8,11 @@
     </head>
     <body class="min-h-screen flex items-center justify-center bg-neutral-content">
         <div class="card w-96 bg-base-100 shadow-xl p-6 space-y-6">
+
+            <% if (error) { %>
+                <p class="text-warning-content mb-4"><%= error %></p>
+            <% } %>
+
             <h2 class="card-title text-xl text-neutral mb-2 pb-2">Login</h2>
             <form action="/login" method="POST" class="space-y-4">
                 <div>

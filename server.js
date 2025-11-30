@@ -15,18 +15,20 @@ const express = require("express");
 const clientSessions = require("client-sessions");
 const path = require("path");
 const bcrypt = require('bcryptjs');
-const PORT = 3000;
+const mongoose = require("mongoose");
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-const { randomUUID } = require("crypto");
-const { timeStamp } = require("console");
-
+// view engine
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")));
 app.set('views', __dirname + '/views');
 
+// express middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
+
+// client session middleware
 app.use(
   clientSessions({
     cookieName: "session",
@@ -36,36 +38,137 @@ app.use(
   })
 );
 
+// connect to mongoose
+mongoose.connect(process.env.mongoose);
+
+let Schema = mongoose.Schema;
+
+// Define user schema
+let userSchema = new Schema({
+  username: {
+    type: String,
+    unique: true
+  },
+  email: {
+    type: String,
+    unique: true
+  },
+  password: String,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+let User = mongoose.model("users", userSchema);
+
+// set local variables
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
+
+// Authentication middleware
 function ensureLogin(req, res, next) {
   if (!req.session.user) {
     res.redirect('/login'); // redirect if they are no logged in
   } else {
     next();
   }
-}
+};
 
-// Homepage Route
+// homepage route handler
 app.get("/", (req, res) => {
     res.render("index");
 });
 
-// Login Route
+// login route handler
 app.get("/login", (req, res) => {
-    res.render("login");
+    res.render("login", { error: null });
 });
 
-// Register Handler
+// login POST handler
+app.post("/login", (req, res) => {
+
+  User.findOne({ username: req.body.username })
+    .exec()
+    .then((user) => {
+      if (!user) {
+        res.render("login", { error: "Incorrect username or password" });
+        return;
+      } else {
+        if (!bcrypt.compareSync(req.body.password, user.password)) {
+          res.render("login", { error: "Incorrect username or password" });
+          return;
+        }
+  
+        req.session.user = {
+          username: user.username,
+          email: user.email
+        };
+        res.redirect("/dashboard");
+      }
+    })
+    .catch((err) => {
+      console.log(`Error: ${err}`);
+      res.render("login", {error: "An error occured - please try again later." });
+    });
+});
+
+// register route handler
 app.get("/register", (req, res) => {
-    res.render("register");
+    res.render("register", { error: null });
 });
 
-// Logout Handler
+// register POST handler
+app.post("/register", (req, res) => {
+  User.findOne({ $or: [{ username: req.body.username }, { email: req.body.email }] })
+    .exec()
+    .then((user) => {
+      if (user) {
+        res.render("register", { error: "Username or email is already taken" });
+        return;
+      }
+      else {
+        const newUser = new User({
+          username: req.body.username,
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 10)
+        });
+  
+        newUser.save().then(() => {
+          req.session.user = {
+            username: req.body.username,
+            email: req.body.email
+          };
+          res.redirect("/dashboard");
+        })
+        .catch((err) => {
+          console.log(`Error: ${err}`);
+          res.render("register", {error: "An error occured - please try again later." });    
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(`Error: ${err}`);
+      res.render("register", {error: "An error occured - please try again later." });    
+    });
+});
+
+// dashboard route handler
+app.get("/dashboard", ensureLogin, (req, res) => {
+  res.render("dashboard");
+});
+
+// logout route handler
 app.get("/logout", (req, res) => {
     req.session.reset();
     res.redirect("/");
 });
 
+// task route handler
+
 
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
