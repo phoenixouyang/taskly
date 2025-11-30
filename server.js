@@ -110,7 +110,7 @@ app.use((req, res, next) => {
 // Authentication middleware
 function ensureLogin(req, res, next) {
   if (!req.session.user) {
-    res.redirect('/login'); // redirect if they are no logged in
+    res.redirect('/login');
   } else {
     next();
   }
@@ -213,7 +213,16 @@ app.get("/logout", (req, res) => {
 
 // task route handler
 app.get("/tasks", ensureLogin, (req, res) => {
-  res.render("tasks");
+  Task.findAll({
+    where: {
+      userId: req.session.user.username
+    },
+  }).then((data) => {
+    res.render("tasks", { tasks: data.length > 0 ? data : null, error: null});
+  })
+  .catch((err) => {
+    res.render("tasks", { tasks: null, error: "There was an error while loading tasks"});
+  });
 });
 
 // task/add route handler
@@ -227,8 +236,16 @@ app.post("/tasks/add", ensureLogin, (req, res) => {
     res.render("addTask", { error: "Task title cannot be empty" });
     return;
   }
-
-
+  Task.create({
+    title: req.body.title,
+    description: req.body.description,
+    dueDate: req.body.dueDate,
+    userId: req.session.user.username
+  }).then(() => {
+    res.redirect("/tasks");
+  }).catch((err) => {
+    res.render("addTask", { error: "There was an error adding tasks" });
+  })
 
 });
 
