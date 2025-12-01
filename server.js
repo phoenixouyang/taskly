@@ -213,22 +213,24 @@ app.get("/logout", (req, res) => {
 });
 
 // tasks route handler
-app.get("/tasks", ensureLogin, (req, res) => {
-  Task.findAll({
-    where: {
-      userId: req.session.user.username
-    },
-  }).then((data) => {
+app.get("/tasks", ensureLogin, async (req, res) => {
+  try {
+    const tasks = await Task.findAll({
+      where: {
+        userId: req.session.user.username
+      },
+    });
+
     // sort by due date, so they don't get reordered
-    data.sort((a, b) => {
+    tasks.sort((a, b) => {
       return a.dueDate - b.dueDate;
     });
 
-    res.render("tasks", { tasks: data.length > 0 ? data : null, error: null });
-  })
-  .catch((err) => {
+    res.render("tasks", { tasks: tasks.length > 0 ? tasks : null, error: null });
+  } catch (err) {
+    console.log(err);
     res.render("tasks", { tasks: null, error: "There was an error while loading tasks"});
-  });
+  }
 });
 
 // task/add route handler
@@ -237,22 +239,26 @@ app.get("/tasks/add", ensureLogin, (req, res) => {
 });
 
 // task/add POST handler
-app.post("/tasks/add", ensureLogin, (req, res) => {
-  if (!req.body.title.trim()) {
-    res.render("addTask", { error: "Task title cannot be empty" });
-    return;
-  }
-  Task.create({
-    title: req.body.title,
-    description: req.body.description,
-    dueDate: new Date(req.body.dueDate),
-    userId: req.session.user.username
-  }).then(() => {
-    res.redirect("/tasks");
-  }).catch((err) => {
-    res.render("addTask", { error: "There was an error adding tasks" });
-  })
+app.post("/tasks/add", ensureLogin, async (req, res) => {
+  try {
+    if (!req.body.title.trim()) {
+      res.render("addTask", { error: "Task title cannot be empty" });
+      return;
+    }
 
+    const desc = req.body.description ? req.body.description : "";
+    const date = req.body.dueDate ? new Date(req.body.dueDate) : new Date();
+
+    await Task.create({
+      title: req.body.title,
+      description: desc,
+      dueDate: date,
+      userId: req.session.user.username
+    });
+    res.redirect("/tasks");
+  } catch {
+    res.render("addTask", { error: "There was an error adding tasks" });
+  }
 });
 
 // tasks/status/:id POST handler
