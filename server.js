@@ -41,7 +41,7 @@ app.use(
 );
 
 // mongose setup
-mongoose.connect(process.env.mongoose);
+mongoose.connect(process.env.MONGOOSE);
 
 let Schema = mongoose.Schema;
 
