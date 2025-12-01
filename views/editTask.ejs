@@ -24,7 +24,7 @@
                         class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#424242] outline-primary placeholder-grey-500"><%= task.description %></textarea>
                 </div>
                 <div>
-                    <input type="date" name="dueDate" value="<%= task.dueDate.toLocaleDateString() %>"
+                    <input type="date" name="dueDate" value="<%= task.dueDate.toISOString().slice(0, 10) %>"
                         class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#424242] outline-primary" />
                 </div>
                 <button class="btn rounded bg-primary w-full p-1" type="submit">Update Task</button>
