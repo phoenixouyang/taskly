@@ -13,7 +13,7 @@
                 <p class="text-warning-content mb-4"><%= error %></p>
             <% } %>
 
-            <h2 class="card-title text-xl text-neutral mb-2 pb-2">Add Task</h2>
+            <h2 class="card-title text-xl text-neutral mb-2 pb-2">Edit Task</h2>
             <form action="/tasks/edit/<%= task.id %>" method="POST" class="space-y-4">
                 <div>
                     <input type="text" name="title" value="<%= task.title %>" required
