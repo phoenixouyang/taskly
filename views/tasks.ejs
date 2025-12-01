@@ -13,41 +13,40 @@
         </div>
         <% if (error) { %>
             <p class="text-warning-content mb-4"><%= error %></p>
-        <% } else { %>
-            <!-- task card loop here -->
-            <% if (tasks) { %>
-                <% tasks.forEach(task => { %>
-                    <div class="card w-full max-w-xl bg-base-100 shadow-xl mt-5 p-6 flex flex-col space-y-2">
-                        <div class="flex justify-between w-full">
-                            <h2 class="font-bold text-lg"><%= task.title %></h1>
-                            <% if (task.status === "pending") { %>
-                                <p class="bg-warning px-3 py-1 text-sm rounded-2xl"><%= task.status %></p>
-                            <% } else { %>
-                                <p class="bg-accent px-3 py-1 text-sm rounded-2xl"><%= task.status %></p>
-                            <% } %>
-                        </div>
-                        <p class="text-neutral"><%= task.description %></p>
-                        <p class="text-neutral">Due: <%= task.dueDate.toLocaleDateString() %></p>
-                        <div class="flex gap-2 pt-2">
-                            <a class="btn btn-sm btn-info" href="/tasks/edit/">Edit</a>
-                            <form action="/tasks/delete/<%= task.id %>" method="POST">
-                                <button class="btn btn-sm btn-secondary" type="submit">Delete</button>
-                            </form>
-                            <form action="/tasks/status/<%= task.id %>" method="POST">
-                                <% if (task.status === "pending")  { %>
-                                    <button class="btn btn-sm btn-accent" type="submit">Mark as Completed</button>
-                                <% } else { %>
-                                    <button class="btn btn-sm btn-warning" type="submit">Mark as Pending</button>
-                                <% } %>
-                            </form>
-                        </div>
+        <% } %>
+        <!-- task card loop here -->
+        <% if (tasks) { %>
+            <% tasks.forEach(task => { %>
+                <div class="card w-full max-w-xl bg-base-100 shadow-xl mt-5 p-6 flex flex-col space-y-2">
+                    <div class="flex justify-between w-full">
+                        <h2 class="font-bold text-lg"><%= task.title %></h1>
+                        <% if (task.status === "pending") { %>
+                            <p class="bg-warning px-3 py-1 text-sm rounded-2xl"><%= task.status %></p>
+                        <% } else { %>
+                            <p class="bg-accent px-3 py-1 text-sm rounded-2xl"><%= task.status %></p>
+                        <% } %>
                     </div>
-                <% }) %>
-            <% } else { %>
-                <div class="card w-full max-w-xl bg-info my-6 py-2 px-4 flex space-y-2 justify-center shadow-lg">
-                    <p class="">No tasks yet. Click 'Add Task' to add one now!</p>
+                    <p class="text-neutral"><%= task.description %></p>
+                    <p class="text-neutral">Due: <%= task.dueDate.getUTCMonth() + 1 %>/<%= task.dueDate.getUTCDate() %>/<%= task.dueDate.getUTCFullYear() %></p>
+                    <div class="flex gap-2 pt-2">
+                        <a class="btn btn-sm btn-info" href="/tasks/edit/<%= task.id %>">Edit</a>
+                        <form action="/tasks/delete/<%= task.id %>" method="POST">
+                            <button class="btn btn-sm btn-secondary" type="submit">Delete</button>
+                        </form>
+                        <form action="/tasks/status/<%= task.id %>" method="POST">
+                            <% if (task.status === "pending")  { %>
+                                <button class="btn btn-sm btn-accent" type="submit">Mark as Completed</button>
+                            <% } else { %>
+                                <button class="btn btn-sm btn-warning" type="submit">Mark as Pending</button>
+                            <% } %>
+                        </form>
+                    </div>
                 </div>
-            <% } %>
+            <% }) %>
+        <% } else { %>
+            <div class="card w-full max-w-xl bg-info my-6 py-2 px-4 flex space-y-2 justify-center shadow-lg">
+                <p class="">No tasks yet. Click 'Add Task' to add one now!</p>
+            </div>
         <% } %>
         <div class="flex gap-6 pt-4 justify-start w-full max-w-xl">
             <a class="btn btn-primary shadow-md hover:shadow-lg" href="/dashboard">Back to Dashboard</a>

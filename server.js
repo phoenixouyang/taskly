@@ -211,7 +211,7 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
-// task route handler
+// tasks route handler
 app.get("/tasks", ensureLogin, (req, res) => {
   Task.findAll({
     where: {
@@ -244,7 +244,7 @@ app.post("/tasks/add", ensureLogin, (req, res) => {
   Task.create({
     title: req.body.title,
     description: req.body.description,
-    dueDate: req.body.dueDate,
+    dueDate: new Date(req.body.dueDate),
     userId: req.session.user.username
   }).then(() => {
     res.redirect("/tasks");
@@ -256,31 +256,76 @@ app.post("/tasks/add", ensureLogin, (req, res) => {
 
 // tasks/status/:id POST handler
 app.post("/tasks/status/:id", ensureLogin, async (req, res) => {
-  const task = await Task.findByPk(req.params.id);
-  const newStatus = task.status === "pending" ? "completed" : "pending";
-
-  await Task.update(
-    {
-      status: newStatus
-    },
-    {
-      where: {id: req.params.id}
-    }
-  ).then(() => {
+  try {
+    const task = await Task.findByPk(req.params.id);
+    const newStatus = task.status === "pending" ? "completed" : "pending";
+  
+    await Task.update(
+      {
+        status: newStatus
+      },
+      {
+        where: {id: req.params.id}
+      }
+    )
     res.redirect("/tasks");
-  });
+  } catch (err) {
+    console.log(err);
+  }
+
 });
 
 // tasks/delete/:id POST handler
 app.post("/tasks/delete/:id", ensureLogin, async (req, res) => {
-  await Task.destroy(
-    {
-      where: { id: req.params.id }
-    }
-  ).then(() => {
+  try {
+    await Task.destroy(
+      {
+        where: { id: req.params.id }
+      }
+    );
     res.redirect("/tasks");
-  });
-})
+  } catch (err) {
+    console.log(err);
+  }
+
+});
+
+// tasks/edit/:id route handler
+app.get("/tasks/edit/:id", ensureLogin, async (req, res) => {
+  const task = await Task.findByPk(req.params.id);
+
+  if (task) {
+    res.render("editTask", {task, error: null});
+  } else {
+    res.redirect("/tasks");
+  }
+});
+
+// tasks/edit/:id POST handler
+app.post("/tasks/edit/:id", ensureLogin, async (req, res) => {
+  try {
+    const task = await Task.findByPk(req.params.id);
+
+    if (!task) {
+      return res.render("editTask", {task, error: "Task not found"});
+    }
+
+    await Task.update(
+      {
+        title: req.body.title,
+        description: req.body.description,
+        dueDate: new Date(req.body.dueDate)
+      },
+      {
+        where: {id: req.params.id}
+      }
+    );
+    res.redirect("/tasks");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/tasks");
+  }
+});
 
 // catch request for routes that don't exist
 app.use((req, res, next) => {

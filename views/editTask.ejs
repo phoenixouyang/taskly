@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="pastel">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/main.css">
+        <title>Edit Task</title>
+    </head>
+    <body class="min-h-screen flex items-center justify-center bg-neutral-content">
+        <div class="card w-96 bg-base-100 shadow-xl p-6 space-y-6">
+
+            <% if (error) { %>
+                <p class="text-warning-content mb-4"><%= error %></p>
+            <% } %>
+
+            <h2 class="card-title text-xl text-neutral mb-2 pb-2">Add Task</h2>
+            <form action="/tasks/edit/<%= task.id %>" method="POST" class="space-y-4">
+                <div>
+                    <input type="text" name="title" value="<%= task.title %>" required
+                        class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#1da1f2] outline-primary" />
+                </div>
+                <div>
+                    <textarea name="description" rows="4"
+                        class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#424242] outline-primary placeholder-grey-500"><%= task.description %></textarea>
+                </div>
+                <div>
+                    <input type="date" name="dueDate" value="<%= task.dueDate.toLocaleDateString() %>"
+                        class="w-full p-2 border border-[#aab8c2] rounded focus:border-[#424242] outline-primary" />
+                </div>
+                <button class="btn rounded bg-primary w-full p-1" type="submit">Update Task</button>
+                <a href="/tasks" class="link link-neutral">Back to tasks</a>
+            </form>
+        </div>
+    </body>
+</html>
