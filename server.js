@@ -16,6 +16,7 @@ const clientSessions = require("client-sessions");
 const path = require("path");
 const bcrypt = require('bcryptjs');
 const mongoose = require("mongoose");
+require("pg");
 const Sequelize = require("sequelize");
 const PORT = process.env.PORT || 3000;
 
